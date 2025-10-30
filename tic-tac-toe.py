@@ -126,8 +126,8 @@ def reset_game():
     draw = False
     winner = None
     # Without these, the previous round painting stays
-    window.fill((52, 78, 91)) 
-    window.fill(BLACK, (0, HEIGHT - BAR_HEIGHT, WIDTH, BAR_HEIGHT))
+    window.fill((50, 80, 90)) 
+    window.fill(BLACK, (0, HEIGHT - BAR_HEIGHT, WIDTH, BAR_HEIGHT)) # Filling only the bottom
 
 #function to check the winner
 def check_winner():
@@ -135,29 +135,29 @@ def check_winner():
     
     # check columns (vertical lines)
     for col in range(3):
-        if taken_section[col][0] is not None and taken_section[col][0] == taken_section[col][1] == taken_section[col][2]:
+        if taken_section[col][0] != None and taken_section[col][0] == taken_section[col][1] == taken_section[col][2]:
             x = (col * CELL_SIZE) + CELL_SIZE // 2 #middle of each cell
             pygame.draw.line(window, RED, (GRID_OFFSET_X + x, 0), (GRID_OFFSET_X + x, GRID_SIZE), 6) 
             return taken_section[col][0]
 
     # check rows (horizontal lines)
     for row in range(3):
-        if taken_section[0][row] is not None and taken_section[0][row] == taken_section[1][row] == taken_section[2][row]:
+        if taken_section[0][row] != None and taken_section[0][row] == taken_section[1][row] == taken_section[2][row]:
             y = (row * CELL_SIZE) + CELL_SIZE // 2 #middle of each cell
             pygame.draw.line(window, RED, (GRID_OFFSET_X, y), (GRID_OFFSET_X + GRID_SIZE, y), 6) 
             return taken_section[0][row]
 
     # check diagonals
-    if taken_section[0][0] is not None and taken_section[0][0] == taken_section[1][1] == taken_section[2][2]:
+    if taken_section[0][0] != None and taken_section[0][0] == taken_section[1][1] == taken_section[2][2]:
         pygame.draw.line(window, RED, (GRID_OFFSET_X, 0), (GRID_OFFSET_X + GRID_SIZE, GRID_SIZE), 6)
         return taken_section[0][0]
 
-    if taken_section[0][2] is not None and taken_section[0][2] == taken_section[1][1] == taken_section[2][0]:
+    if taken_section[0][2] != None and taken_section[0][2] == taken_section[1][1] == taken_section[2][0]:
         pygame.draw.line(window, RED, (GRID_OFFSET_X, GRID_SIZE), (GRID_OFFSET_X + GRID_SIZE, 0), 6)
         return taken_section[0][2]
 
     #check draw (if no winner)
-    if winner is None and all(all(cell is not None for cell in row) for row in taken_section):
+    if winner == None and all(all(cell != None for cell in row) for row in taken_section):
         draw = True
         return None
 
@@ -204,39 +204,42 @@ def draw_scoreboard():
 # Function generating a random computer move
 def computer_move():
     global turn
-    empty_cells = [(row, column) for row in range(3) for column in range(3) if taken_section[row][column] is None]
+    empty_cells = [(row, column) for row in range(3) for column in range(3) if taken_section[row][column] == None]
     if empty_cells:
         row, col = random.choice(empty_cells)
         draw_xo(row, col)
+##TODO could make difficulty by making computer try to block or go for the win
+
 
 # Keep the screen window open
-running = True
+running = True # A variable that is used to quit the game
 while running:
     if start == True:
+        window.fill((50,80,90))
     # Draw each line below the previous one
-        for i, line in enumerate(menu_lines):
-            text = font.render(line, True, WHITE)
-            text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + i * 50)) # 'i' needed so the messages don't overlap
+        for i, line in enumerate(menu_lines): # Need both the index and the message
+            text = font.render(line, True, WHITE) # Message gets rendered here
+            text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 3 + i * 100)) # 'i' (index) needed to shift the message
             window.blit(text, text_rect)
         pygame.display.update()
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT: # If X in the window is pressed, we quit
                 running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_y:
+            elif event.type == pygame.KEYDOWN: # Checking key presses
+                if event.key == pygame.K_y: # "Y" key
                     window.fill((52, 78, 91))
                     draw_grid()
                     start = False         
-                elif event.key == pygame.K_q:
+                elif event.key == pygame.K_q: # "Q" key
                     running = False
-                elif event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_SPACE: # "Spacebar" key
                     draw_scoreboard()
                     time.sleep(1.5) 
-                elif event.key == pygame.K_a:
+                elif event.key == pygame.K_a: # "A" key
                     vs_computer = True
                     start = False
-                    window.fill((52, 78, 91))
+                    window.fill((50, 80, 90))
                     draw_grid()
 
     # "Play again" message
@@ -245,12 +248,13 @@ while running:
         text = font_big.render("Play again? (Y = Yes / Q = Quit)", True, WHITE)
         
         # Using the bottom bar
-        bar_y_start = HEIGHT - BAR_HEIGHT
+        bar_y_start = HEIGHT - BAR_HEIGHT 
         window.fill((0, 0, 0), (0, bar_y_start, WIDTH, BAR_HEIGHT)) 
         text_rect = text.get_rect(center=(WIDTH // 2, bar_y_start + BAR_HEIGHT // 2)) 
         window.blit(text, text_rect)
         pygame.display.update()
 
+        # Setting up keybinds for various events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -263,15 +267,18 @@ while running:
     else:
         draw_grid() # Redraw grid every frame
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False     
+            if event.type == pygame.QUIT: # Can quit by pressing X on the game window
+                running = False   
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     draw_scoreboard()
                     time.sleep(1.5) # Scoreboard stays for 1.5s
+                if event.key == pygame.K_q: # To quit at anytime
+                    running = False  
+
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: # Checking for left clicks in specific
                 (x_coordinate, y_coordinate) = pygame.mouse.get_pos()
-                
+
                 # Check if the click is within the grid's bounds
                 if (x_coordinate > GRID_OFFSET_X and x_coordinate < GRID_OFFSET_X + GRID_SIZE and
                     y_coordinate > GRID_OFFSET_Y and y_coordinate < GRID_OFFSET_Y + GRID_SIZE):
@@ -280,10 +287,11 @@ while running:
                     row = (x_coordinate - GRID_OFFSET_X) // CELL_SIZE
                     column = (y_coordinate - GRID_OFFSET_Y) // CELL_SIZE
                     
-                    if taken_section[row][column] is None:
+                    # If there grid cell is unoccupied we draw a symbol
+                    if taken_section[row][column] == None:
                         draw_xo(row, column)
         
-        if winner is None and not draw and turn == 'o' and vs_computer == True:
+        if winner == None and not draw and turn == 'o' and vs_computer == True:
             computer_move()
         
         winner = check_winner()
