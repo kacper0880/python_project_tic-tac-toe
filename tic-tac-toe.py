@@ -133,21 +133,21 @@ def reset_game():
 def check_winner():
     global draw, winner
     
-    # check columns (vertical lines)
+    # Check columns (vertical lines)
     for col in range(3):
         if taken_section[col][0] != None and taken_section[col][0] == taken_section[col][1] == taken_section[col][2]:
-            x = (col * CELL_SIZE) + CELL_SIZE // 2 #middle of each cell
-            pygame.draw.line(window, RED, (GRID_OFFSET_X + x, 0), (GRID_OFFSET_X + x, GRID_SIZE), 6) 
+            x = (col * CELL_SIZE) + CELL_SIZE // 2 # Middle of each cell
+            pygame.draw.line(window, RED, (GRID_OFFSET_X + x, 0), (GRID_OFFSET_X + x, GRID_SIZE), 6) # Drawing a winning line through the middle of the cells
             return taken_section[col][0]
 
-    # check rows (horizontal lines)
+    # Check rows (horizontal lines)
     for row in range(3):
         if taken_section[0][row] != None and taken_section[0][row] == taken_section[1][row] == taken_section[2][row]:
-            y = (row * CELL_SIZE) + CELL_SIZE // 2 #middle of each cell
-            pygame.draw.line(window, RED, (GRID_OFFSET_X, y), (GRID_OFFSET_X + GRID_SIZE, y), 6) 
+            y = (row * CELL_SIZE) + CELL_SIZE // 2 # Middle of each cell
+            pygame.draw.line(window, RED, (GRID_OFFSET_X, y), (GRID_OFFSET_X + GRID_SIZE, y), 6)
             return taken_section[0][row]
 
-    # check diagonals
+    # Check diagonals
     if taken_section[0][0] != None and taken_section[0][0] == taken_section[1][1] == taken_section[2][2]:
         pygame.draw.line(window, RED, (GRID_OFFSET_X, 0), (GRID_OFFSET_X + GRID_SIZE, GRID_SIZE), 6)
         return taken_section[0][0]
@@ -156,7 +156,7 @@ def check_winner():
         pygame.draw.line(window, RED, (GRID_OFFSET_X, GRID_SIZE), (GRID_OFFSET_X + GRID_SIZE, 0), 6)
         return taken_section[0][2]
 
-    #check draw (if no winner)
+    # Check draw; no winner and all the cells are occupied
     if winner == None and all(all(cell != None for cell in row) for row in taken_section):
         draw = True
         return None
@@ -263,7 +263,7 @@ while running:
                     reset_game()            
                 elif event.key == pygame.K_q: 
                     running = False
-    #Main loop
+    #Main game loop
     else:
         draw_grid() # Redraw grid every frame
         for event in pygame.event.get():
@@ -291,11 +291,14 @@ while running:
                     if taken_section[row][column] == None:
                         draw_xo(row, column)
         
+        # No one won/drew yet and it's 'o' turn and the player chose to play vs computer
         if winner == None and not draw and turn == 'o' and vs_computer == True:
             computer_move()
         
+        # Checking if anyone managed to win
         winner = check_winner()
         
+        # Draws the winner/draw message
         if winner != None or draw == True:
             draw_winner(winner)
         else:
