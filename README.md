@@ -6,7 +6,7 @@
 
 
 
-GitHub contains everything in the file needed to run the games including the history of all the commits and changes that happened over the course of the game's creation.
+GitHub contains everything in the file needed to run the game including the history of all the commits and changes that happened over the course of the game's creation.
 
 GitHub URL: https://github.com/kacper0880/python\_project\_tic-tac-toe    
 
