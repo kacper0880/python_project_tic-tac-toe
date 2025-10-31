@@ -66,6 +66,8 @@ draws = 0
 
 # Draw the columns and rows 
 def draw_grid():
+    """The function is repsonsible for drawing the playing grid."""
+
     # Draw vertical lines
     # pygame.draw.line(surface, colour, start_pos(x,y), end_pos(x,y), width/thickness)
     # Offset to not get onto the black box at the bottom
@@ -79,6 +81,7 @@ def draw_grid():
 
 #draw the X or the Y
 def draw_xo(row, column):
+    """The function draws an 'X' or an 'O' symbol in the middle of a selected grid cell. """
     global turn 
 
     # Calculate x and y coordinates based on cell size and offset
@@ -99,6 +102,8 @@ def draw_xo(row, column):
 
 #function for telling the user who's turn it is      
 def draw_turn():
+    """The function draws a black square at the bottom of the screen and displays a message indicating whose turn it is."""
+
     global draw
 
     # Shows who's turn it is
@@ -119,7 +124,10 @@ def draw_turn():
 
 #resets all the global variables and screen
 def reset_game():
+    """The function is called when a match has finished and it resets global variables to their initial states whilst clearing the grid."""
+
     global taken_section, turn, draw, winner, end_condition
+    
     taken_section = [[None, None, None], [None, None, None], [None, None, None]]
     end_condition = False
     turn = 'x'
@@ -131,6 +139,8 @@ def reset_game():
 
 #function to check the winner
 def check_winner():
+    """This function goes through the cells horizontally, vertically and diagonally to check if there is a winner."""
+
     global draw, winner
     
     # Check columns (vertical lines)
@@ -163,6 +173,8 @@ def check_winner():
 
 #function to draw the winner screen/text
 def draw_winner(winner):
+    """The function prints a message on the middle of the screen highlighting who won or if there was a draw. """
+
     global end_condition, x_wins, o_wins, draws
 
     if winner == 1:
@@ -185,6 +197,8 @@ def draw_winner(winner):
 
 # Function to draw the scoreboard 
 def draw_scoreboard():
+    """Function that draws the scoreboard on a black square at the bottom of the screen. """
+
     score_text = f"X Wins: {x_wins}  O Wins: {o_wins}  Draws: {draws}"
     
     # Scale font size based on bar height
@@ -203,6 +217,8 @@ def draw_scoreboard():
 
 # Function generating a random computer move
 def computer_move():
+    """Function only called when the user has picked to play against the computer. It makes a computer find and pick a random empty grid cell. """
+
     global turn
     empty_cells = [(row, column) for row in range(3) for column in range(3) if taken_section[row][column] == None]
     if empty_cells:
